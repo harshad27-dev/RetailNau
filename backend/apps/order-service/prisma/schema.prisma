@@ -1,0 +1,64 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  COMPLETED
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CASH
+  UPI
+  CARD
+  CREDIT
+}
+
+enum PaymentStatus {
+  UNPAID
+  PAID
+  PARTIALLY_PAID
+  REFUNDED
+}
+
+model Order {
+  id            String        @id @default(uuid())
+  shopId        String
+  customerId    String?
+  status        OrderStatus   @default(PENDING)
+  totalAmount   Float
+  discount      Float         @default(0)
+  finalAmount   Float
+  paymentMethod PaymentMethod @default(CASH)
+  paymentStatus PaymentStatus @default(UNPAID)
+  notes         String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  items         OrderItem[]
+
+  @@index([shopId])
+  @@index([customerId])
+}
+
+model OrderItem {
+  id          String  @id @default(uuid())
+  orderId     String
+  productId   String
+  productName String
+  quantity    Int
+  unitPrice   Float
+  totalPrice  Float
+
+  order       Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+}

@@ -1,0 +1,37 @@
+{
+  "name": "kyrana-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "backend/apps/*",
+    "backend/packages/*",
+    "frontend/*"
+  ],
+  "scripts": {
+    "dev:user": "npm run dev --workspace=@kyrana/user-service",
+    "dev:auth": "npm run dev --workspace=@kyrana/auth-service",
+    "dev:order": "npm run dev --workspace=@kyrana/order-service",
+    "dev:product": "npm run dev --workspace=@kyrana/product-service",
+    "dev:inventory": "npm run dev --workspace=@kyrana/inventory-service",
+    "dev:analytics": "npm run dev --workspace=@kyrana/analytics-service",
+    "dev:recommendation": "npm run dev --workspace=@kyrana/recommendation-service",
+    "dev:gateway": "npm run dev --workspace=@kyrana/gateway",
+    "dev:mobile": "npm run start --workspace=mobile",
+    "dev:all": "concurrently --kill-others-on-fail -n USER,AUTH,ORDER,PRODUCT,INVENTORY,ANALYTICS,RECOMMENDATION,GATEWAY -c blue,green,yellow,cyan,magenta,white,red,gray \"npm run dev -w @kyrana/user-service\" \"npm run dev -w @kyrana/auth-service\" \"npm run dev -w @kyrana/order-service\" \"npm run dev -w @kyrana/product-service\" \"npm run dev -w @kyrana/inventory-service\" \"npm run dev -w @kyrana/analytics-service\" \"npm run dev -w @kyrana/recommendation-service\" \"npm run dev -w @kyrana/gateway\"",
+    "db:generate": "npm run prisma:generate --workspaces --if-present",
+    "db:migrate": "npm run prisma:migrate --workspaces --if-present",
+    "db:push": "npm run prisma:push --workspaces --if-present",
+    "db:studio": "concurrently -n USER,AUTH,ORDER,PRODUCT,INVENTORY -c blue,green,yellow,cyan,magenta \"npm run prisma:studio -w @kyrana/user-service\" \"npm run prisma:studio -w @kyrana/auth-service\" \"npm run prisma:studio -w @kyrana/order-service\" \"npm run prisma:studio -w @kyrana/product-service\" \"npm run prisma:studio -w @kyrana/inventory-service\"",
+    "build": "npm run build --workspaces --if-present",
+    "start": "npm run start --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  }
+}

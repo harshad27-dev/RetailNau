@@ -1,0 +1,16 @@
+{
+  "name": "kyrana-backend",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "npm run build -ws --if-present",
+    "dev": "npm run dev -ws --if-present",
+    "start": "npm run start -ws --if-present",
+    "test": "npm run test -ws --if-present",
+    "lint": "npm run lint -ws --if-present"
+  },
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=10.0.0"
+  }
+}

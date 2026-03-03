@@ -1,0 +1,105 @@
+name: kyrana-gateway-lan
+
+services:
+  global-gateway:
+    image: nginx:1.27-alpine
+    container_name: kyrana-global-gateway
+    restart: unless-stopped
+    volumes:
+      - ./services/global-gateway/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      backend_internal: {}
+      office_lan:
+        ipv4_address: 192.168.1.40
+
+  analytics-gateway:
+    image: nginx:1.27-alpine
+    container_name: kyrana-analytics-gateway
+    restart: unless-stopped
+    volumes:
+      - ./services/analytics-gateway/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      backend_internal: {}
+      office_lan:
+        ipv4_address: 192.168.1.50
+
+  auth-gateway:
+    image: nginx:1.27-alpine
+    container_name: kyrana-auth-gateway
+    restart: unless-stopped
+    volumes:
+      - ./services/auth-gateway/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      backend_internal: {}
+      office_lan:
+        ipv4_address: 192.168.1.51
+
+  inventory-gateway:
+    image: nginx:1.27-alpine
+    container_name: kyrana-inventory-gateway
+    restart: unless-stopped
+    volumes:
+      - ./services/inventory-gateway/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      backend_internal: {}
+      office_lan:
+        ipv4_address: 192.168.1.52
+
+  order-gateway:
+    image: nginx:1.27-alpine
+    container_name: kyrana-order-gateway
+    restart: unless-stopped
+    volumes:
+      - ./services/order-gateway/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      backend_internal: {}
+      office_lan:
+        ipv4_address: 192.168.1.53
+
+  product-gateway:
+    image: nginx:1.27-alpine
+    container_name: kyrana-product-gateway
+    restart: unless-stopped
+    volumes:
+      - ./services/product-gateway/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      backend_internal: {}
+      office_lan:
+        ipv4_address: 192.168.1.54
+
+  recommendation-gateway:
+    image: nginx:1.27-alpine
+    container_name: kyrana-recommendation-gateway
+    restart: unless-stopped
+    volumes:
+      - ./services/recommendation-gateway/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      backend_internal: {}
+      office_lan:
+        ipv4_address: 192.168.1.55
+
+  user-gateway:
+    image: nginx:1.27-alpine
+    container_name: kyrana-user-gateway
+    restart: unless-stopped
+    volumes:
+      - ./services/user-gateway/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      backend_internal: {}
+      office_lan:
+        ipv4_address: 192.168.1.56
+
+networks:
+  backend_internal:
+    name: kyrana_backend_internal
+    driver: bridge
+
+  office_lan:
+    name: kyrana_office_lan
+    driver: macvlan
+    driver_opts:
+      parent: ${OFFICE_LAN_PARENT_INTERFACE:-Ethernet}
+    ipam:
+      config:
+        - subnet: ${OFFICE_LAN_SUBNET:-192.168.1.0/24}
+          gateway: ${OFFICE_LAN_GATEWAY:-192.168.1.1}

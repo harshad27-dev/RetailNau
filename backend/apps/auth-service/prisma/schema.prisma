@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  SHOP_OWNER
+  ADMIN
+}
+
+enum OtpType {
+  LOGIN
+  PASSWORD_RESET
+}
+
+// Single source of truth for Identity
+// Model is named "User" so Prisma generates prisma.user (camelCase)
+model User {
+  id            String         @id @default(uuid())
+  mobile        String         @unique
+  role          Role           @default(USER)
+  isVerified    Boolean        @default(false)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+
+  refreshTokens RefreshToken[]
+  otps          Otp[]
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  expiresAt DateTime
+  isRevoked Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Otp {
+  id        String   @id @default(uuid())
+  userId    String
+  code      String
+  type      OtpType  @default(LOGIN)
+  expiresAt DateTime
+  isUsed    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

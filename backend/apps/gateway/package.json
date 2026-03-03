@@ -1,0 +1,25 @@
+{
+  "name": "@kyrana/gateway",
+  "version": "1.0.0",
+  "private": true,
+  "main": "dist/server.js",
+  "types": "dist/server.d.ts",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "echo build-placeholder",
+    "start": "node dist/server.js",
+    "test": "echo test-placeholder",
+    "lint": "echo lint-placeholder"
+  },
+  "dependencies": {
+    "@kyrana/config": "1.0.0",
+    "@kyrana/constants": "1.0.0",
+    "@kyrana/logger": "1.0.0",
+    "@kyrana/types": "1.0.0",
+    "@kyrana/utils": "1.0.0",
+    "@kyrana/validation": "1.0.0"
+  },
+  "devDependencies": {
+    "concurrently": "9.2.1"
+  }
+}

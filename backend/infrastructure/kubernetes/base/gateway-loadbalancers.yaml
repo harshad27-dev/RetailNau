@@ -1,0 +1,127 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: global-gateway
+  namespace: kyrana
+  annotations:
+    metallb.universe.tf/loadBalancerIPs: 192.168.1.40
+spec:
+  type: LoadBalancer
+  selector:
+    app: global-gateway
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: analytics-gateway
+  namespace: kyrana
+  annotations:
+    metallb.universe.tf/loadBalancerIPs: 192.168.1.50
+spec:
+  type: LoadBalancer
+  selector:
+    app: analytics-gateway
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-gateway
+  namespace: kyrana
+  annotations:
+    metallb.universe.tf/loadBalancerIPs: 192.168.1.51
+spec:
+  type: LoadBalancer
+  selector:
+    app: auth-gateway
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: inventory-gateway
+  namespace: kyrana
+  annotations:
+    metallb.universe.tf/loadBalancerIPs: 192.168.1.52
+spec:
+  type: LoadBalancer
+  selector:
+    app: inventory-gateway
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: order-gateway
+  namespace: kyrana
+  annotations:
+    metallb.universe.tf/loadBalancerIPs: 192.168.1.53
+spec:
+  type: LoadBalancer
+  selector:
+    app: order-gateway
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: product-gateway
+  namespace: kyrana
+  annotations:
+    metallb.universe.tf/loadBalancerIPs: 192.168.1.54
+spec:
+  type: LoadBalancer
+  selector:
+    app: product-gateway
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: recommendation-gateway
+  namespace: kyrana
+  annotations:
+    metallb.universe.tf/loadBalancerIPs: 192.168.1.55
+spec:
+  type: LoadBalancer
+  selector:
+    app: recommendation-gateway
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: user-gateway
+  namespace: kyrana
+  annotations:
+    metallb.universe.tf/loadBalancerIPs: 192.168.1.56
+spec:
+  type: LoadBalancer
+  selector:
+    app: user-gateway
+  ports:
+    - name: http
+      port: 80
+      targetPort: 80

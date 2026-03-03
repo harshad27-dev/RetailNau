@@ -1,0 +1,7 @@
+﻿src/services/authService.ts(13,33): error TS2339: Property 'authUser' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+src/services/authService.ts(18,33): error TS2339: Property 'authUser' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+src/services/authService.ts(34,13): error TS2322: Type '{ userId: any; code: string; expiresAt: Date; }' is not assignable to type '(Without<OtpCreateInput, OtpUncheckedCreateInput> & OtpUncheckedCreateInput) | (Without<OtpUncheckedCreateInput, OtpCreateInput> & OtpCreateInput)'.
+  Type '{ userId: any; code: string; expiresAt: Date; }' is not assignable to type 'Without<OtpUncheckedCreateInput, OtpCreateInput> & OtpCreateInput'.
+    Type '{ userId: any; code: string; expiresAt: Date; }' is missing the following properties from type 'OtpCreateInput': type, user
+src/services/authService.ts(52,35): error TS2339: Property 'authUser' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
+src/services/authService.ts(85,26): error TS2339: Property 'authUser' does not exist on type 'PrismaClient<PrismaClientOptions, never, DefaultArgs>'.
