@@ -1,219 +1,166 @@
-import React, { useRef } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Dimensions, ActivityIndicator, NativeSyntheticEvent, TextInputKeyPressEventData } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import React, { useRef, useState } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ActivityIndicator,
+  NativeSyntheticEvent,
+  TextInputKeyPressEventData,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { OTPVerificationProps } from "../../types/auth.types";
 
-const { width } = Dimensions.get('window');
-const PRIMARY_COLOR = '#16A34A';
-const PADDING = 24;
-
-interface OTPVerificationProps {
-    mobileNumber: string;
-    otp: string[];
-    setOtp: (otp: string[]) => void;
-    timer: number;
-    onBack: () => void;
-    onResendOtp: () => void;
-    onVerify: () => void;
-    isLoading: boolean;
-}
+const OTP_LENGTH = 6;
 
 export default function OTPVerification({
-    mobileNumber,
-    otp,
-    setOtp,
-    timer,
-    onBack,
-    onResendOtp,
-    onVerify,
-    isLoading
+  mobileNumber,
+  otp,
+  setOtp,
+  timer,
+  onBack,
+  onResendOtp,
+  onVerify,
+  isLoading,
 }: OTPVerificationProps) {
+  const inputRefs = useRef<TextInput[]>([]);
+  const [activeIndex, setActiveIndex] = useState<number>(0);
 
-    const inputRefs = useRef<(TextInput | null)[]>([]);
+  // Handle typing
+  const handleOtpChange = (value: string, index: number) => {
+    const cleanValue = value.replace(/\D/g, "");
 
-    const handleOtpChange = (value: string, index: number) => {
-        // Handle paste: if user pastes a full OTP string into first box
-        if (value.length > 1) {
-            const digits = value.replace(/\D/g, '').slice(0, 6).split('');
-            const newOtp = [...otp];
-            digits.forEach((d, i) => { newOtp[i] = d; });
-            setOtp(newOtp);
-            // Focus the last filled box (or last box)
-            const lastIndex = Math.min(digits.length - 1, 5);
-            inputRefs.current[lastIndex]?.focus();
-            return;
-        }
+    // handle paste (ex: paste full OTP)
+    if (cleanValue.length > 1) {
+      const otpArray = cleanValue.slice(0, OTP_LENGTH).split("");
+      const newOtp = [...otp];
 
-        const newOtp = [...otp];
-        newOtp[index] = value;
-        setOtp(newOtp);
+      otpArray.forEach((digit, i) => {
+        newOtp[i] = digit;
+      });
 
-        // Auto-advance to next input when a digit is entered
-        if (value.length === 1 && index < 5) {
-            inputRefs.current[index + 1]?.focus();
-        }
-    };
+      setOtp(newOtp);
 
-    const handleKeyPress = (e: NativeSyntheticEvent<TextInputKeyPressEventData>, index: number) => {
-        // Move back to previous input on backspace if current box is already empty
-        if (e.nativeEvent.key === 'Backspace' && otp[index] === '' && index > 0) {
-            inputRefs.current[index - 1]?.focus();
-        }
-    };
+      const nextIndex = Math.min(otpArray.length, OTP_LENGTH - 1);
+      inputRefs.current[nextIndex]?.focus();
+      return;
+    }
 
-    const isComplete = otp.join('').length === 6;
+    const newOtp = [...otp];
+    newOtp[index] = cleanValue;
+    setOtp(newOtp);
 
-    return (
-        <View style={styles.screenContainer}>
-            <TouchableOpacity style={styles.backButton} onPress={onBack}>
-                <Ionicons name="arrow-back" size={24} color="#111827" />
-            </TouchableOpacity>
+    // move to next input
+    if (cleanValue && index < OTP_LENGTH - 1) {
+      inputRefs.current[index + 1]?.focus();
+    }
+  };
 
-            <View style={styles.headerContainer}>
-                <Text style={styles.title}>Verify OTP</Text>
-                <Text style={styles.helperText}>
-                    Enter 6-digit code sent to +91 {mobileNumber}
-                </Text>
-            </View>
+  // Handle backspace navigation
+  const handleKeyPress = (
+    e: NativeSyntheticEvent<TextInputKeyPressEventData>,
+    index: number
+  ) => {
+    if (e.nativeEvent.key === "Backspace" && otp[index] === "" && index > 0) {
+      inputRefs.current[index - 1]?.focus();
+    }
+  };
 
-            <View style={styles.otpContainer}>
-                {otp.map((digit, index) => (
-                    <TextInput
-                        key={index}
-                        ref={(ref) => { inputRefs.current[index] = ref; }}
-                        style={[styles.otpInput, digit.length > 0 && styles.otpInputFilled]}
-                        keyboardType="number-pad"
-                        maxLength={6}
-                        value={digit}
-                        onChangeText={(value) => handleOtpChange(value, index)}
-                        onKeyPress={(e) => handleKeyPress(e, index)}
-                        autoFocus={index === 0}
-                        cursorColor={PRIMARY_COLOR}
-                        selectionColor={PRIMARY_COLOR}
-                    />
-                ))}
-            </View>
+  const isComplete = otp.join("").length === OTP_LENGTH;
 
-            <View style={styles.resendContainer}>
-                <Text style={styles.resendText}>
-                    {timer > 0 ? `Resend OTP in 00:${timer.toString().padStart(2, '0')}` : "Didn't receive the code?"}
-                </Text>
-                {timer === 0 && (
-                    <TouchableOpacity onPress={onResendOtp} disabled={isLoading}>
-                        <Text style={styles.resendButtonText}>Resend</Text>
-                    </TouchableOpacity>
-                )}
-            </View>
+  return (
+    <View className="flex-1 bg-white px-6 pt-6">
+      {/* Back Button */}
+      <TouchableOpacity
+        onPress={onBack}
+        className="w-10 h-10 rounded-xl bg-gray-100 items-center justify-center mb-8"
+      >
+        <Ionicons name="arrow-back" size={22} color="#111827" />
+      </TouchableOpacity>
 
-            <View style={{ flex: 1 }} />
+      {/* Header */}
+      <View className="mb-10">
+        <Text className="text-[26px] font-bold text-gray-900 mb-2">
+          Verify OTP
+        </Text>
 
-            <TouchableOpacity
-                style={[styles.primaryButton, !isComplete && styles.disabledButton]}
-                activeOpacity={0.8}
-                disabled={!isComplete || isLoading}
-                onPress={onVerify}
-            >
-                {isLoading ? (
-                    <ActivityIndicator color="#fff" />
-                ) : (
-                    <Text style={styles.primaryButtonText}>Verify & Continue</Text>
-                )}
-            </TouchableOpacity>
-        </View>
-    );
+        <Text className="text-gray-500 text-[15px]">
+          Enter the 6-digit code sent to
+        </Text>
+
+        <Text className="text-gray-900 font-semibold mt-1">
+          +91 {mobileNumber}
+        </Text>
+      </View>
+
+      {/* OTP Inputs */}
+      <View className="flex-row justify-between mb-10">
+        {otp.map((digit, index) => {
+          const isActive = activeIndex === index;
+
+          return (
+            <TextInput
+              key={`otp-input-${index}`}
+              ref={(ref) => {
+                if (ref) inputRefs.current[index] = ref;
+              }}
+              value={digit}
+              maxLength={1}
+              keyboardType="number-pad"
+              autoFocus={index === 0}
+              onFocus={() => setActiveIndex(index)}
+              onChangeText={(value) => handleOtpChange(value, index)}
+              onKeyPress={(e) => handleKeyPress(e, index)}
+              className={`w-12 h-14 text-center text-xl font-semibold rounded-xl border ${
+                isActive
+                  ? "border-green-600 bg-white"
+                  : digit
+                  ? "border-green-500 bg-white"
+                  : "border-gray-200 bg-gray-50"
+              }`}
+              cursorColor="#16A34A"
+              selectionColor="#16A34A"
+            />
+          );
+        })}
+      </View>
+
+      {/* Resend Section */}
+      <View className="items-center mb-6">
+        {timer > 0 ? (
+          <Text className="text-gray-500 text-sm">
+            Resend OTP in{" "}
+            <Text className="font-semibold">
+              00:{timer.toString().padStart(2, "0")}
+            </Text>
+          </Text>
+        ) : (
+          <TouchableOpacity disabled={isLoading} onPress={onResendOtp}>
+            <Text className="text-green-600 font-semibold text-sm">
+              Resend OTP
+            </Text>
+          </TouchableOpacity>
+        )}
+      </View>
+
+      <View className="flex-1" />
+
+      {/* Verify Button */}
+      <TouchableOpacity
+        disabled={!isComplete || isLoading}
+        onPress={onVerify}
+        className={`h-14 rounded-xl items-center justify-center mb-6 ${
+          !isComplete || isLoading ? "bg-gray-300" : "bg-green-600"
+        }`}
+      >
+        {isLoading ? (
+          <ActivityIndicator color="white" />
+        ) : (
+          <Text className="text-white font-semibold text-[16px]">
+            Verify & Continue
+          </Text>
+        )}
+      </TouchableOpacity>
+    </View>
+  );
 }
-
-const styles = StyleSheet.create({
-    screenContainer: {
-        flex: 1,
-        padding: PADDING,
-        backgroundColor: '#fff',
-    },
-    backButton: {
-        width: 44,
-        height: 44,
-        borderRadius: 22,
-        backgroundColor: '#F3F4F6',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: 24,
-    },
-    headerContainer: {
-        marginBottom: 32,
-    },
-    title: {
-        fontSize: 26,
-        fontWeight: '700',
-        color: '#111827',
-        marginBottom: 8,
-    },
-    helperText: {
-        fontSize: 15,
-        color: '#6B7280',
-        lineHeight: 22,
-    },
-    otpContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginBottom: 32,
-    },
-    otpInput: {
-        width: (width - (PADDING * 2) - (5 * 10)) / 6,
-        height: 60,
-        borderRadius: 16,
-        backgroundColor: '#F9FAFB',
-        borderWidth: 1.5,
-        borderColor: '#E5E7EB',
-        textAlign: 'center',
-        fontSize: 22,
-        fontWeight: '600',
-        color: '#111827',
-    },
-    otpInputFilled: {
-        borderColor: PRIMARY_COLOR,
-        backgroundColor: '#fff',
-        shadowColor: PRIMARY_COLOR,
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.05,
-        shadowRadius: 8,
-        elevation: 2,
-    },
-    resendContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    resendText: {
-        color: '#6B7280',
-        fontSize: 14,
-        fontWeight: '500',
-    },
-    resendButtonText: {
-        color: PRIMARY_COLOR,
-        fontSize: 14,
-        fontWeight: '600',
-        marginLeft: 6,
-    },
-    primaryButton: {
-        backgroundColor: PRIMARY_COLOR,
-        height: 56,
-        borderRadius: 16,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: 24,
-        shadowColor: PRIMARY_COLOR,
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.25,
-        shadowRadius: 8,
-        elevation: 4,
-    },
-    primaryButtonText: {
-        color: '#fff',
-        fontSize: 16,
-        fontWeight: '600',
-    },
-    disabledButton: {
-        backgroundColor: '#E5E7EB',
-        shadowOpacity: 0,
-        elevation: 0,
-    },
-});

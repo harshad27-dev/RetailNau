@@ -1,15 +1,7 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions } from 'react-native';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-
-const PRIMARY_COLOR = '#16A34A';
-const PADDING = 24;
-
-interface WelcomeProps {
-    onContinueMobile: () => void;
-    onContinueGoogle: () => void;
-    onContinueApple: () => void;
-}
+import { WelcomeProps } from '../../types/auth.types';
 
 export default function Welcome({
     onContinueMobile,
@@ -17,144 +9,56 @@ export default function Welcome({
     onContinueApple
 }: WelcomeProps) {
     return (
-        <View style={styles.screenContainer}>
-            <View style={styles.logoContainer}>
-                <View style={styles.logoPlaceholder}>
-                    <Ionicons name="basket" size={48} color={PRIMARY_COLOR} />
+        <View className="flex-1 p-6 bg-white">
+            <View className="flex-1 justify-center items-center mt-10">
+                <View
+                    className="w-[88px] h-[88px] bg-green-50 rounded-3xl justify-center items-center mb-6 shadow-sm shadow-green-600/10"
+                    style={{ elevation: 2 }}
+                >
+                    <Ionicons name="basket" size={48} color="#16A34A" />
                 </View>
-                <Text style={styles.title}>Welcome</Text>
-                <Text style={styles.subtitle}>Login or create an account to continue</Text>
+                <Text className="text-[28px] font-poppins-bold text-gray-900 mb-2 text-center">Welcome</Text>
+                <Text className="text-[15px] font-poppins text-gray-500 text-center px-5">Login or create an account to continue</Text>
             </View>
 
-            <View style={styles.bottomContainer}>
-                <TouchableOpacity style={styles.primaryButton} activeOpacity={0.8} onPress={onContinueMobile}>
-                    <Text style={styles.primaryButtonText}>Continue with Mobile Number</Text>
+            <View className="pb-5">
+                <TouchableOpacity
+                    className="bg-green-600 h-14 rounded-2xl justify-center items-center mb-6 shadow-md shadow-green-600/25"
+                    style={{ elevation: 4 }}
+                    activeOpacity={0.8}
+                    onPress={onContinueMobile}
+                >
+                    <Text className="text-white text-base font-poppins-semibold">Continue with Mobile Number</Text>
                 </TouchableOpacity>
 
-                <View style={styles.dividerContainer}>
-                    <View style={styles.dividerLine} />
-                    <Text style={styles.dividerText}>OR</Text>
-                    <View style={styles.dividerLine} />
+                <View className="flex-row items-center mb-6">
+                    <View className="flex-1 h-[1px] bg-gray-100" />
+                    <Text className="text-gray-400 px-4 text-sm font-poppins-medium">OR</Text>
+                    <View className="flex-1 h-[1px] bg-gray-100" />
                 </View>
 
-                <TouchableOpacity style={styles.outlineButton} activeOpacity={0.7} onPress={onContinueGoogle}>
-                    <Ionicons name="logo-google" size={20} color="#000" style={styles.buttonIcon} />
-                    <Text style={styles.outlineButtonText}>Continue with Google</Text>
+                <TouchableOpacity
+                    className="h-14 rounded-2xl border-[1.5px] border-gray-100 justify-center items-center flex-row mb-4 bg-white"
+                    activeOpacity={0.7}
+                    onPress={onContinueGoogle}
+                >
+                    <Ionicons name="logo-google" size={20} color="#000" style={{ marginRight: 12 }} />
+                    <Text className="text-base text-gray-900 font-poppins-semibold">Continue with Google</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={styles.outlineButton} activeOpacity={0.7} onPress={onContinueApple}>
-                    <Ionicons name="logo-apple" size={20} color="#000" style={styles.buttonIcon} />
-                    <Text style={styles.outlineButtonText}>Continue with Apple</Text>
+                <TouchableOpacity
+                    className="h-14 rounded-2xl border-[1.5px] border-gray-100 justify-center items-center flex-row mb-4 bg-white"
+                    activeOpacity={0.7}
+                    onPress={onContinueApple}
+                >
+                    <Ionicons name="logo-apple" size={20} color="#000" style={{ marginRight: 12 }} />
+                    <Text className="text-base text-gray-900 font-poppins-semibold">Continue with Apple</Text>
                 </TouchableOpacity>
 
-                <Text style={styles.termsText}>
+                <Text className="text-xs font-poppins text-gray-400 text-center mt-2 leading-[18px]">
                     By continuing, you agree to our Terms of Service and Privacy Policy.
                 </Text>
             </View>
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    screenContainer: {
-        flex: 1,
-        padding: PADDING,
-        backgroundColor: '#fff',
-    },
-    logoContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: 40,
-    },
-    logoPlaceholder: {
-        width: 88,
-        height: 88,
-        backgroundColor: '#F0FDF4',
-        borderRadius: 24,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: 24,
-        shadowColor: PRIMARY_COLOR,
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 12,
-        elevation: 2,
-    },
-    title: {
-        fontSize: 28,
-        fontWeight: '700',
-        color: '#111827',
-        marginBottom: 8,
-        textAlign: 'center',
-    },
-    subtitle: {
-        fontSize: 15,
-        color: '#6B7280',
-        textAlign: 'center',
-        paddingHorizontal: 20,
-    },
-    bottomContainer: {
-        paddingBottom: 20,
-    },
-    primaryButton: {
-        backgroundColor: PRIMARY_COLOR,
-        height: 56,
-        borderRadius: 16,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: 24,
-        shadowColor: PRIMARY_COLOR,
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.25,
-        shadowRadius: 8,
-        elevation: 4,
-    },
-    primaryButtonText: {
-        color: '#fff',
-        fontSize: 16,
-        fontWeight: '600',
-    },
-    dividerContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 24,
-    },
-    dividerLine: {
-        flex: 1,
-        height: 1,
-        backgroundColor: '#F3F4F6',
-    },
-    dividerText: {
-        color: '#9CA3AF',
-        paddingHorizontal: 16,
-        fontSize: 14,
-        fontWeight: '500',
-    },
-    outlineButton: {
-        height: 56,
-        borderRadius: 16,
-        borderWidth: 1.5,
-        borderColor: '#F3F4F6',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'row',
-        marginBottom: 16,
-        backgroundColor: '#fff',
-    },
-    buttonIcon: {
-        marginRight: 12,
-    },
-    outlineButtonText: {
-        fontSize: 16,
-        color: '#111827',
-        fontWeight: '600',
-    },
-    termsText: {
-        fontSize: 12,
-        color: '#9CA3AF',
-        textAlign: 'center',
-        marginTop: 8,
-        lineHeight: 18,
-    },
-});

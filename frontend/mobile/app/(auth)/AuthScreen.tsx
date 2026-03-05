@@ -29,7 +29,7 @@ export default function AuthScreen() {
     const [mobileNumber, setMobileNumber] = useState('');
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
     const [timer, setTimer] = useState(30);
-    const [accountType, setAccountType] = useState<'USER' | 'OWNER' | null>(null);
+    const [accountType, setAccountType] = useState<'USER' | 'SHOP_OWNER' | null>(null);
     const [fullName, setFullName] = useState('');
     const [email, setEmail] = useState('');
 
@@ -103,7 +103,7 @@ export default function AuthScreen() {
     });
 
     useEffect(() => {
-        let interval: NodeJS.Timeout;
+        let interval: any;
         if (step === 3 && timer > 0) {
             interval = setInterval(() => {
                 setTimer((previewTimer) => previewTimer - 1);
@@ -114,8 +114,8 @@ export default function AuthScreen() {
         };
     }, [step, timer]);
 
-    const handleNextStep = () => setStep(step + 1);
-    const handlePrevStep = () => setStep(step - 1);
+    const handleNextStep = () => setStep((prev) => prev + 1);
+    const handlePrevStep = () => setStep((prev) => prev - 1);
 
     // Navigate buyer → customer home, seller → owner dashboard
     // router.replace removes auth screens from history so back button can't return to them
@@ -145,7 +145,7 @@ export default function AuthScreen() {
                         onBack={handlePrevStep}
                         isLoading={sendOtpMutation.isPending}
                         onSendOtp={() => {
-                            if (mobileNumber.length === 10) {
+                            if (/^\d{10}$/.test(mobileNumber)) {
                                 sendOtpMutation.mutate(mobileNumber);
                             }
                         }}
@@ -163,7 +163,7 @@ export default function AuthScreen() {
                         isLoading={verifyOtpMutation.isPending}
                         onVerify={() => {
                             const otpString = otp.join('');
-                            if (otpString.length === 6) {
+                            if (/^\d{6}$/.test(otpString)) {
                                 verifyOtpMutation.mutate({ mobile: mobileNumber, otp: otpString });
                             }
                         }}
@@ -178,9 +178,7 @@ export default function AuthScreen() {
                         isLoading={updateRoleMutation.isPending}
                         onContinue={() => {
                             if (accountType) {
-                                // Map 'OWNER' → 'SHOP_OWNER' to match backend enum
-                                const backendRole = accountType === 'OWNER' ? 'SHOP_OWNER' : 'USER';
-                                updateRoleMutation.mutate(backendRole);
+                                updateRoleMutation.mutate(accountType);
                             }
                         }}
                     />
