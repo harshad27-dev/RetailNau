@@ -19,6 +19,7 @@ import ProfileSetup from '../../components/auth/ProfileSetup';
 import { useMutation } from '@tanstack/react-query';
 import { sendOtp, verifyOtp, updateRole } from '../../services/auth.service';
 import { setCredentials } from '../../store/slices/authSlice';
+import GradientBackground from '../../components/ui/GradientBackground';
 
 export default function AuthScreen() {
     const dispatch = useDispatch();
@@ -201,25 +202,26 @@ export default function AuthScreen() {
     };
 
     return (
-        <SafeAreaView style={styles.safeArea}>
-            <KeyboardAvoidingView
-                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                style={styles.container}
-            >
-                <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-                    <View style={styles.container}>
-                        {renderCurrentStep()}
-                    </View>
-                </TouchableWithoutFeedback>
-            </KeyboardAvoidingView>
-        </SafeAreaView>
+        <GradientBackground>
+            <SafeAreaView style={styles.safeArea}>
+                <KeyboardAvoidingView
+                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                    style={styles.container}
+                >
+                    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                        <View style={styles.container}>
+                            {renderCurrentStep()}
+                        </View>
+                    </TouchableWithoutFeedback>
+                </KeyboardAvoidingView>
+            </SafeAreaView>
+        </GradientBackground>
     );
 }
 
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: '#fff',
     },
     container: {
         flex: 1,
