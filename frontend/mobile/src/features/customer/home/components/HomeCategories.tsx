@@ -32,7 +32,7 @@ export default function HomeCategories({ onCategoryPress }: HomeCategoriesProps)
                         activeOpacity={0.75}
                     >
                         <View style={styles.categoryIconWrap}>
-                            <MaterialCommunityIcons name={cat.iconName as any} size={26} color="#2E7D32" />
+                            <MaterialCommunityIcons name={cat.iconName as any} size={26} color="#E65100" />
                         </View>
                         <Text style={[styles.categoryLabel, styles.fontMedium]} numberOfLines={2}>
                             {cat.name}

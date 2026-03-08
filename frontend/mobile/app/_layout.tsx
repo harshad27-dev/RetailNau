@@ -1,12 +1,14 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Text, TextInput } from 'react-native';
 import { Stack, useRouter, useSegments, useRootNavigationState } from 'expo-router';
-import { Provider, useSelector } from 'react-redux';
+import { Provider, useDispatch, useSelector } from 'react-redux';
 import { store, RootState } from '../store/store';
 import '../global.css';
 import * as SplashScreen from 'expo-splash-screen';
 import { useFonts } from 'expo-font';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { setCredentials } from '../store/slices/authSlice';
+import { loadAuthSession } from '../services/authStorage';
 import {
   Poppins_400Regular,
   Poppins_500Medium,
@@ -26,26 +28,51 @@ function AuthGuard() {
   const router = useRouter();
   const segments = useSegments();
   const rootNavigationState = useRootNavigationState();
+  const dispatch = useDispatch();
+  const [sessionChecked, setSessionChecked] = useState(false);
 
   // Get auth state from Redux store
   const { isAuthenticated, role } = useSelector((state: RootState) => state.auth);
 
   useEffect(() => {
+    let isMounted = true;
+
+    const bootstrapSession = async () => {
+      const session = await loadAuthSession();
+      if (session?.token && session?.user && isMounted) {
+        dispatch(setCredentials(session));
+      }
+
+      if (isMounted) {
+        setSessionChecked(true);
+      }
+    };
+
+    bootstrapSession();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [dispatch]);
+
+  useEffect(() => {
     // Don't redirect until the navigator has finished mounting
-    if (!rootNavigationState?.key) return;
+    if (!rootNavigationState?.key || !sessionChecked) return;
 
     const inAuthGroup = segments[0] === '(auth)';
 
     if (!isAuthenticated && !inAuthGroup) {
       router.replace('/(auth)/AuthScreen');
     } else if (isAuthenticated) {
-      if (role === 'CUSTOMER' && segments[0] !== '(customer)') {
+      const isCustomerRole = role === 'USER' || role === 'CUSTOMER';
+
+      if (isCustomerRole && segments[0] !== '(customer)') {
         router.replace('/(customer)/(tabs)/home');
       } else if (role === 'SHOP_OWNER' && segments[0] !== '(owner)') {
         router.replace('/(owner)/(tabs)/dashboard');
       }
     }
-  }, [isAuthenticated, role, segments, rootNavigationState?.key]);
+  }, [isAuthenticated, role, segments, rootNavigationState?.key, sessionChecked]);
 
   return null;
 }

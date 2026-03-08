@@ -20,10 +20,6 @@ export default function HomeSearchBar({ onFilterPress, onSearchChange }: HomeSea
                         onChangeText={onSearchChange}
                     />
                 </View>
-
-                <TouchableOpacity style={styles.filterButton} onPress={onFilterPress} activeOpacity={0.75}>
-                    <Feather name="sliders" size={18} color="#FFFFFF" />
-                </TouchableOpacity>
             </View>
         </View>
     );

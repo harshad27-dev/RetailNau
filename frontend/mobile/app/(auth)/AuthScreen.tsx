@@ -20,6 +20,7 @@ import { useMutation } from '@tanstack/react-query';
 import { sendOtp, verifyOtp, updateRole } from '../../services/auth.service';
 import { setCredentials } from '../../store/slices/authSlice';
 import GradientBackground from '../../components/ui/GradientBackground';
+import { Role } from '../../types/user.types';
 
 export default function AuthScreen() {
     const dispatch = useDispatch();
@@ -79,7 +80,7 @@ export default function AuthScreen() {
 
             if (!isNewUser) {
                 // Returning user — role already set, skip onboarding and go home directly
-                navigateToHome();
+                navigateToHome(user.role);
             } else {
                 // New user — show AccountTypeSelection → ProfileSetup
                 handleNextStep();
@@ -120,8 +121,10 @@ export default function AuthScreen() {
 
     // Navigate buyer → customer home, seller → owner dashboard
     // router.replace removes auth screens from history so back button can't return to them
-    const navigateToHome = () => {
-        if (role === 'SHOP_OWNER') {
+    const navigateToHome = (targetRole?: Role | null) => {
+        const resolvedRole = targetRole ?? role;
+
+        if (resolvedRole === 'SHOP_OWNER') {
             router.replace('/(owner)/(tabs)/dashboard');
         } else {
             router.replace('/(customer)/(tabs)/home');
